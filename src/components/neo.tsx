@@ -1,24 +1,45 @@
-"use client";
-
 import { NEObjectSchema } from "@/lib/schemas/neo";
-import { Diameter, Sun } from "lucide-react";
+import { diameterRangeM, formatDate, formatMissDistanceKm, formatSpeedKms } from "@/lib/utils";
+import { Clock, ExternalLink, Rocket, Ruler, Sun, Target } from "lucide-react";
 import { z } from "zod";
-import { Card, CardContent, CardHeader } from "./ui/card";
+import { Stat } from "./stat-wrapper";
+import { Badge } from "./ui/badge";
+import { Card } from "./ui/card";
 
 export default function NEObject({ data }: { data: z.infer<typeof NEObjectSchema> }) {
     return (
-        <Card className="display-flex flex-row items-center">
-            <CardHeader className="text-3xl w-[200px] text-nowrap">{data.name}</CardHeader>
-            <CardContent className="display-flex flex-col">
-                <div className="grid grid-cols-2 items-center gap-4 w-100">
-                    <span className="text-left"><Diameter className="inline mr-2 text-primary" />Diameter</span>
-                    <span>{data.estimated_diameter.meters.estimated_diameter_min.toFixed(2)} - {data.estimated_diameter.meters.estimated_diameter_max.toFixed(2)} m</span>
-                </div>
-                <div className="grid grid-cols-2 items-center gap-4 w-100">
-                    <span className="text-left"><Sun className="inline mr-2 text-primary" />Absolute magnitude</span>
-                    <span>{data.absolute_magnitude_h.toFixed(2)}</span>
-                </div>
-            </CardContent>
+        <Card className="p-4 rounded-2xl shadow-md border bg-background w-3/4">
+            <div className="flex items-center justify-between">
+                <h1 className="text-3xl font-bold">
+                    {data.name}
+                </h1>
+                <Badge variant={data.is_potentially_hazardous_asteroid ? "destructive" : "secondary"} className="text-lg">
+                    {data.is_potentially_hazardous_asteroid ? "Hazardous" : "Safe"}
+                </Badge>
+            </div>
+
+            <p className="text-sm text-gray-500 mt-1">
+                <a
+                    href={data.nasa_jpl_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center underline"
+                >
+                    View in JPL Small-Body Database
+                    <ExternalLink className="w-4 h-4 ml-1" />
+                </a>
+            </p>
+
+            <div className="grid grid-cols-2 gap-4 mt-4 text-lg">
+                <Stat icon={Sun} label="Magnitude" value={data.absolute_magnitude_h} />
+                <Stat icon={Ruler} label="Estimated Diameter" value={diameterRangeM(data)} />
+                <Stat icon={Rocket} label="Speed" value={formatSpeedKms(data.close_approach_data[0].relative_velocity.kilometers_per_second)} />
+                <Stat icon={Target} label="Miss Distance" value={formatMissDistanceKm(data.close_approach_data[0].miss_distance.kilometers)} />
+            </div>
+
+            <div className="mt-4 text-md text-gray-500">
+                <Stat icon={Clock} label="Close Approach" value={formatDate(data.close_approach_data[0].close_approach_date_full)} />
+            </div>
         </Card>
     );
 }

@@ -8,7 +8,7 @@ import { Card } from "./ui/card";
 
 export default function NEObject({ data }: { data: z.infer<typeof NEObjectSchema> }) {
     return (
-        <Card className="p-4 rounded-2xl shadow-md border bg-background w-3/4">
+        <Card className="p-4 rounded-2xl shadow-md border bg-background w-full">
             <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold">
                     {data.name}

@@ -9,7 +9,7 @@ interface StatProps {
 
 export const Stat: React.FC<StatProps> = ({ icon: Icon, label, value }) => {
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-center space-x-2">
             <Icon className="h-6 w-6 text-primary" />
             <div>
                 <div className="text-lg">{label}</div>
